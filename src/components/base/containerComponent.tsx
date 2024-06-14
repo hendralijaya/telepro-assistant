@@ -23,12 +23,7 @@ const ContainerComponent = ({
           defaultSize={92}
           className="h-full overflow-auto"
         >
-          <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel defaultSize={14}>
-              <SidebarComponent />
-            </ResizablePanel>
-            <ResizablePanel defaultSize={86}>{children}</ResizablePanel>
-          </ResizablePanelGroup>
+          {children}
         </ResizablePanel>
       </ResizablePanelGroup>
     </main>
