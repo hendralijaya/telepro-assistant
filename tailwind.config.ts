@@ -24,6 +24,41 @@ const config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        // primary:{
+        //   50:"#F8F5FF",
+        //   100:"#B89CFC",
+        //   200:"#7D49F8",
+        //   300:"#6528F7",
+        //   400:"#501BCE",
+        // },
+        // secondary:{
+        //   50:"#E8F1FC",
+        //   100:"#77A9EE",
+        //   200:"#1B6DDF",
+        //   300:"#1450A3",
+        //   400:"#114388",
+        // },
+        // danger:{
+        //   50:"#FBEAEA",
+        //   100:"#E16B6B",
+        //   200:"#C92929",
+        //   300:"#A92323",
+        //   400:"#6E1717"
+        // },
+        // success:{
+        //   50:"#F6FEFB",
+        //   100:"#1BC590",
+        //   200:"#12825F",
+        //   300:"#0E674B",
+        //   400:"#0A4834"
+        // }
+        // warning:{
+        //   50:"#FFFDFA",
+        //   100:"#F9DBB5",
+        //   200:"#F2AB53",
+        //   300:"#EE9322",
+        //   400:"#A6620D"
+        // }
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -52,6 +87,9 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+
+
+
       },
       borderRadius: {
         lg: "var(--radius)",
