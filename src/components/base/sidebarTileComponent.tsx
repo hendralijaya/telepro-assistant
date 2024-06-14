@@ -5,7 +5,7 @@ interface Props {
   Icon: React.ElementType<any>;
   title: string;
   trail?: string;
-  isActive: boolean;
+  isActive?: boolean;
   onClick: () => void;
 }
 

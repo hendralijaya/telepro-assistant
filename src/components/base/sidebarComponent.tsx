@@ -14,6 +14,7 @@ import {
   FilmReel,
   InstagramLogo,
   MapTrifold,
+  Plus,
   Users,
 } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
@@ -27,6 +28,14 @@ const SidebarComponent = () => {
 
   return (
     <div className="flex flex-col gap-4 p-4">
+      <SidebarTileComponent
+        Icon={Plus}
+        title="New Chat"
+        onClick={() => {
+          router.push("/admin");
+        }}
+      />
+
       <SidebarTileComponent
         Icon={Users}
         title="Candidate"
