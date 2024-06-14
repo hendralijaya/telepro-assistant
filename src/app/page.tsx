@@ -1,12 +1,7 @@
-<<<<<<< Updated upstream
-import Image from "next/image";
-import { ResizablePanelGroup, ResizablePanel } from "@/components/ui/resizable";
-import SidebarComponent from "@/components/base/sidebarComponent";
-=======
+import { ResizablePanelGroup, ResizablePanel } from '@/components/ui/resizable';
+import SidebarComponent from '@/components/base/sidebarComponent';
 import { useQuery } from '@tanstack/react-query';
-import Image from 'next/image';
 import prisma from '@/db';
->>>>>>> Stashed changes
 
 export default function Home() {
   const { isFetching, data, error, refetch } = useQuery({
