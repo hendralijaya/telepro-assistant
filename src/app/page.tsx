@@ -1,8 +1,44 @@
+<<<<<<< Updated upstream
 import Image from "next/image";
 import { ResizablePanelGroup, ResizablePanel } from "@/components/ui/resizable";
 import SidebarComponent from "@/components/base/sidebarComponent";
+=======
+import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
+import prisma from '@/db';
+>>>>>>> Stashed changes
 
 export default function Home() {
+  const { isFetching, data, error, refetch } = useQuery({
+    queryKey: ['chat-session'],
+    queryFn: async () => {
+      return prisma.chatSession.findMany();
+    },
+  });
+
+  //fetch specific message from the chat session
+  // const {
+  //   isFetching: isFetchingMessage,
+  //   data: messageData,
+  //   error: messageError,
+  //   refetch: messageRefetch,
+  // } = useQuery({
+  //   queryKey: ['chat-session', 'message'],
+  //   queryFn: async () => {
+  //     return prisma.chatSession.findFirst({
+  //       where: {
+  //         messages: {
+  //           some: {
+  //             id: '1',
+  //           },
+  //         },
+  //       },
+  //     });
+  //   },
+  // });
+
+  //fetch data from chat-session message
+
   return (
     <ResizablePanelGroup direction="horizontal">
       <ResizablePanel defaultSize={14}>
