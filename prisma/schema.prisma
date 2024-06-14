@@ -25,9 +25,16 @@ model Message {
 }
 
 model ChatSession {
+<<<<<<< Updated upstream
   id        String    @id @default(cuid())
   name      String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+=======
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+>>>>>>> Stashed changes
   messages  Message[]
 }
