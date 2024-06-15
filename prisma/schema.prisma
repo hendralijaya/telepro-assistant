@@ -30,4 +30,5 @@ model ChatSession {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   messages  Message[]
+  mood      String
 }
