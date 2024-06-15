@@ -96,3 +96,8 @@
   background: black;
   border-radius: 0 5rem 5rem 0;
 }
+
+  input{
+    border: none;
+    outline: none;
+  }
