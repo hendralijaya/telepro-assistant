@@ -29,15 +29,17 @@ export default function Home() {
     const response = await axiosInstance.post("/openai", {
       content,
     });
+    console.log(response.data);
 
     setMessages(response.data);
+    console.log(messages);
   };
 
   const formSubmitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(form.entries()) as CreateMessageProps;
-
+    console.log(data);
     createMessage(data);
   };
 
