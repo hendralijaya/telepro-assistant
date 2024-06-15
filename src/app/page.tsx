@@ -1,30 +1,30 @@
-"use client";
-import { ResizablePanelGroup, ResizablePanel } from "@/components/ui/resizable";
-import SidebarComponent from "@/components/base/sidebarComponent";
-import prisma from "@/lib/db";
-import { Button } from "@/components/ui/button";
+'use client';
+import { ResizablePanelGroup, ResizablePanel } from '@/components/ui/resizable';
+import SidebarComponent from '@/components/base/sidebarComponent';
+import prisma from '@/lib/db';
+import { Button } from '@/components/ui/button';
 
-import { useQuery } from "@tanstack/react-query";
-import axios, { AxiosResponse } from "axios";
-import { PaperPlaneTilt } from "@phosphor-icons/react";
-import { FormEvent, useState } from "react";
-import { MessageProps } from "./api/openai/route";
-import axiosInstance from "@/lib/axiosInstance";
-import ChatboxComponent from "@/components/module/chatboxComponent";
-import { ChatSession } from "@prisma/client";
+import { useQuery } from '@tanstack/react-query';
+import axios, { AxiosResponse } from 'axios';
+import { PaperPlaneTilt } from '@phosphor-icons/react';
+import { FormEvent, useState } from 'react';
+import { MessageProps } from './api/openai/route';
+import axiosInstance from '@/lib/axiosInstance';
+import ChatboxComponent from '@/components/module/chatboxComponent';
+import { ChatSession } from '@prisma/client';
 
 /// Page
 export default function Home() {
   const [messages, setMessages] = useState<MessageProps[]>([]);
-  const [selectedChatSession, setSelectedChatSession] =
-    useState<ChatSession | null>(null);
+
+  const [selectedChatSession, setSelectedChatSession] = useState<ChatSession | null>(null);
   const [shouldFetch, setShouldFetch] = useState(false);
 
   type CreateMessageProps = {
     content: string;
   };
   const createMessage = async ({ content }: CreateMessageProps) => {
-    const response = await axiosInstance.post("/openai", {
+    const response = await axiosInstance.post('/openai', {
       content,
     });
     setMessages(response.data.data);
@@ -39,11 +39,11 @@ export default function Home() {
   };
 
   const { isFetching, data, error, refetch } = useQuery({
-    queryKey: ["chat-session"],
+    queryKey: ['chat-session'],
     queryFn: async () => {
-      const response = await fetch("/api/chat-sessions");
+      const response = await fetch('/api/chat-sessions');
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error('Network response was not ok');
       }
       return response.json();
     },
@@ -55,13 +55,11 @@ export default function Home() {
     error: messageError,
     refetch: messageRefetch,
   } = useQuery({
-    queryKey: ["chat-session", "message", selectedChatSession?.id], // Add selectedChatSession to queryKey
+    queryKey: ['chat-session', 'message', selectedChatSession?.id], // Add selectedChatSession to queryKey
     queryFn: async () => {
-      const response = await fetch(
-        `/api/messages?id=${selectedChatSession?.id}`
-      );
+      const response = await fetch(`/api/messages?id=${selectedChatSession?.id}`);
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error('Network response was not ok');
       }
       setMessages(await response.json());
       return response.json();
@@ -75,6 +73,11 @@ export default function Home() {
     <ResizablePanelGroup direction="horizontal">
       <ResizablePanel defaultSize={14}>
         <SidebarComponent
+          clearChatSessions={() => {
+            setShouldFetch(false);
+            setSelectedChatSession(null);
+            setMessages([]);
+          }}
           chatSessions={Array.isArray(data) ? data : []}
           onTileClick={(chatSession) => {
             setSelectedChatSession(chatSession);
@@ -84,45 +87,21 @@ export default function Home() {
       </ResizablePanel>
       <ResizablePanel defaultSize={86}>
         <main className="flex h-[calc(100vh-5rem)] flex-col items-center p-16 bg-gray-100">
-          <ResizablePanelGroup
-            direction="vertical"
-            className="w-full h-full"
-          >
-            <ResizablePanel
-              defaultSize={92}
-              maxSize={92}
-              className="overflow-auto"
-            >
+          <ResizablePanelGroup direction="vertical" className="w-full h-full">
+            <ResizablePanel defaultSize={92} maxSize={92} className="overflow-auto">
               {messages.map((m, i) => (
-                <ChatboxComponent
-                  key={i}
-                  isChatBot={m.role == "assistant"}
-                >
+                <ChatboxComponent key={i} isChatBot={m.role == 'assistant'}>
                   {m.content}
                 </ChatboxComponent>
               ))}
             </ResizablePanel>
-            <ResizablePanel
-              defaultSize={8}
-              className="flex items-center"
-            >
-              <form
-                onSubmit={formSubmitHandler}
-                className="w-full flex items-center gap-2"
-              >
+            <ResizablePanel defaultSize={8} className="flex items-center">
+              <form onSubmit={formSubmitHandler} className="w-full flex items-center gap-2">
                 <div className="border-4 rounded-full w-full p-2">
-                  <input
-                    type="text"
-                    name="content"
-                    className="border-none bg-transparent w-full"
-                    placeholder="Type or message"
-                  />
+                  <input type="text" name="content" className="border-none bg-transparent w-full" placeholder="Type or message" />
                 </div>
                 <button type="submit">
-                  <PaperPlaneTilt
-                    className="fill-blue-400"
-                    weight={"bold"}
-                  />
+                  <PaperPlaneTilt className="fill-blue-400" weight={'bold'} />
                 </button>
               </form>
             </ResizablePanel>

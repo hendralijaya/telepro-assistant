@@ -11,11 +11,18 @@ import { ChatSession } from '@prisma/client';
 interface SidebarTileProps {
   chatSessions: ChatSession[];
   onTileClick: (chatSession: ChatSession) => void;
+  clearChatSessions: () => void;
 }
 
 const SidebarComponent = (props: SidebarTileProps) => {
   const router = useRouter();
   const pathName = usePathname();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredChatSessions, setFilteredChatSessions] = useState<ChatSession[]>(props.chatSessions);
+
+  useEffect(() => {
+    setFilteredChatSessions(props.chatSessions.filter((chatSession) => chatSession.name.toLowerCase().includes(searchQuery.toLowerCase())));
+  }, [searchQuery, props.chatSessions]);
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -23,7 +30,7 @@ const SidebarComponent = (props: SidebarTileProps) => {
         <SidebarTileComponent
           key="new"
           onClick={() => {
-            router.push('/new');
+            props.clearChatSessions();
           }}
         >
           <div className="flex px-4 gap-x-2 items-center">
@@ -33,13 +40,13 @@ const SidebarComponent = (props: SidebarTileProps) => {
         </SidebarTileComponent>
         <div className="flex border-black border rounded-full w-full items-center px-4">
           <MagnifyingGlass size={24} weight="bold" />
-          <input type="text" placeholder="Search Chat" className="border-2 border-gray-300 rounded-md p-2 w-full" />
+          <input type="text" placeholder="Search Chat" className="border-2 border-gray-300 rounded-md p-2 w-full" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
         </div>
         {/* make a line  */}
         <div className="border-t-2 border-gray-300 w-full"></div>
       </div>
       <p className="font-semibold">Search History</p>
-      {props.chatSessions.map((chatSession) => (
+      {filteredChatSessions.map((chatSession) => (
         <SidebarTileComponent
           key={chatSession.id}
           onClick={() => {
