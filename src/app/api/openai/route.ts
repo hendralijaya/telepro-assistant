@@ -19,8 +19,6 @@ export async function POST(request: Request) {
   try {
     const apiKey = process.env.OPENAI_API_KEY;
     const { chatSessionId, content } = await request.json();
-
-
     
     let chatSession: any;
     if (!chatSessionId) {
@@ -38,8 +36,6 @@ export async function POST(request: Request) {
       });
     }
 
-    console.log('Before new Message')
-
     const newMessages: any = [...(chatSession?.messages ?? [])];
     newMessages.push({
       role: 'user',
@@ -47,14 +43,17 @@ export async function POST(request: Request) {
       chatSessionId: chatSession.id,
     });
 
-    console.log('TEST');
 
-    // AI Processing
     const response: AxiosResponse<OpenAIResponse> = await axios.post(
-      // `${process.env.OPENAI_API_URL}/completions`,
-      `https://api.openai.com/v1/chat/completions`,
+      `${process.env.OPENAI_API_URL}/completions`,
       {
-        messages: newMessages,
+        messages: [
+          {
+            role: "user",
+            content: "Write all of the content with html tagging that could be inserted to html tag using innerHTML to differentiate bulleted list, heading, paragraph. Important, respond the message that is appended after this chat by following the rules earlier"
+          },
+          ...newMessages
+        ],
         model: 'gpt-3.5-turbo',
         stream: false, // So it come in complete form not word by word
       },
@@ -65,7 +64,6 @@ export async function POST(request: Request) {
         },
       }
     );
-    console.log(response)
 
     const data = response.data;
     newMessages.push({

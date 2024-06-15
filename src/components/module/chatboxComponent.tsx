@@ -3,7 +3,7 @@ import { CopySimple, Robot } from "@phosphor-icons/react";
 
 export default function ChatboxComponent({
   children,
-  isChatBot = false,
+  isChatBot,
 }: Readonly<{
   children: React.ReactNode;
   isChatBot: boolean;
@@ -24,20 +24,24 @@ export default function ChatboxComponent({
         <div
           onClick={copyText}
           className={cn({
-            "rounded-tl-xl rounded-r-full": isChatBot,
-            "rounded-l-full rounded tr-xl": !isChatBot,
-            "border-4 p-2 grid grid-cols-[1fr_5fr]": true,
+            "rounded-tl-xl rounded-r-2xl grid-cols-[1fr_5fr]": isChatBot,
+            "rounded-l-2xl rounded tr-xl": !isChatBot,
+            "border-4 p-2 grid": true,
           })}
         >
           <Robot
             className={cn({
+              "w-full": true,
               hidden: !isChatBot,
             })}
           />
-          <div>{children}</div>
+          <div dangerouslySetInnerHTML={{ __html: children as string }} />
         </div>
         <div className="flex">
-          <CopySimple className="rounded-full bg-white p-1" />
+          <CopySimple
+            className="rounded-full bg-white p-1"
+            size={25}
+          />
         </div>
       </div>
     </section>
