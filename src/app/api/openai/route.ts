@@ -22,7 +22,6 @@ export async function POST(request: Request) {
     
     let chatSession: any;
     if (!chatSessionId) {
-      console.log(content)
       chatSession = await prisma.chatSession.create({
         data: {
           name: content,
@@ -34,6 +33,8 @@ export async function POST(request: Request) {
         where: { id: chatSessionId },
         include: { messages: true },
       });
+      console.log("TEST1")
+      console.log(chatSession)
     }
 
     const newMessages: any = [...(chatSession?.messages ?? [])];
@@ -42,6 +43,9 @@ export async function POST(request: Request) {
       content,
       chatSessionId: chatSession.id,
     });
+    console.log("TEST2")
+    console.log(newMessages)
+ 
 
 
     const response: AxiosResponse<OpenAIResponse> = await axios.post(
@@ -50,7 +54,7 @@ export async function POST(request: Request) {
         messages: [
           {
             role: "user",
-            content: "Write all of the content with html tagging that could be inserted to html tag using innerHTML to differentiate bulleted list, heading, paragraph. Important, respond the message that is appended after this chat by following the rules earlier"
+            content: "Write all of the content with html tagging that could be inserted to html tag using innerHTML to differentiate bulleted list, heading, paragraph. Important, respond the message that is appended after this chat by following the rules earlier. Also analyze the sentiment of the customer mood or emotion and give key like this (mood:neutral or mood:angry) append it on any of your response"
           },
           ...newMessages
         ],
@@ -65,15 +69,22 @@ export async function POST(request: Request) {
       }
     );
 
+    console.log("SASDADAS")
     const data = response.data;
     newMessages.push({
       ...data.choices[0].message,
       chatSessionId: chatSession.id,
     });
 
-    await prisma.message.createMany({
-      data: newMessages,
-    });
+    if(!chatSessionId){
+      await prisma.message.createMany({
+        data: newMessages,
+      });
+    }else{
+      await prisma.message.createMany({
+        data: newMessages.slice(newMessages.length - 2, newMessages.length)
+      })
+    }
 
     return NextResponse.json(
       {
