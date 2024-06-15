@@ -1,4 +1,4 @@
-import { MouseEventHandler } from "react";
+import { MouseEventHandler } from 'react';
 
 export default function SidebarTileComponent({
   children,
@@ -8,10 +8,7 @@ export default function SidebarTileComponent({
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }>) {
   return (
-    <button
-      onClick={onClick}
-      className="button"
-    >
+    <button onClick={onClick} className="button">
       {children}
     </button>
   );
