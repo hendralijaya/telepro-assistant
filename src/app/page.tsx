@@ -1,15 +1,14 @@
-"use client";
+'use client';
+import { ResizablePanelGroup, ResizablePanel } from '@/components/ui/resizable';
+import SidebarComponent from '@/components/base/sidebarComponent';
+import prisma from '@/lib/db';
+import { Button } from '@/components/ui/button';
 
-import { ResizablePanelGroup, ResizablePanel } from "@/components/ui/resizable";
-import SidebarComponent from "@/components/base/sidebarComponent";
-import { Button } from "@/components/ui/button";
-
-import { useQuery } from "@tanstack/react-query";
-import prisma from "@/db";
-import axios, { AxiosResponse } from "axios";
-import { useState } from "react";
-import { MessageProps } from "./api/openai/route";
-import axiosInstance from "@/lib/axiosInstance";
+import { useQuery } from '@tanstack/react-query';
+import axios, { AxiosResponse } from 'axios';
+import { useState } from 'react';
+import { MessageProps } from './api/openai/route';
+import axiosInstance from '@/lib/axiosInstance';
 
 /// Page
 export default function Home() {
@@ -20,7 +19,7 @@ export default function Home() {
     content: string;
   };
   const createMessage = async ({ content }: createMessageProps) => {
-    const response = await axiosInstance.post("/openai", {
+    const response = await axiosInstance.post('/openai', {
       content,
     });
   };
@@ -32,8 +31,18 @@ export default function Home() {
   //     return prisma.chatSession.findMany();
   //   },
   // });
+  const { isFetching, data, error, refetch } = useQuery({
+    queryKey: ['chat-session'],
+    queryFn: async () => {
+      const response = await fetch('/api/chat-sessions');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    },
+  });
 
-  //fetch specific message from the chat session
+  // fetch specific message from the chat session
   // const {
   //   isFetching: isFetchingMessage,
   //   data: messageData,
@@ -67,7 +76,7 @@ export default function Home() {
           <Button
             onClick={() =>
               createMessage({
-                content: "Hello",
+                content: 'Hello',
               })
             }
           >
