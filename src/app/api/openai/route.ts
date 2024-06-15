@@ -24,9 +24,11 @@ export async function POST(request: Request) {
     
     let chatSession: any;
     if (!chatSessionId) {
+      console.log(content)
       chatSession = await prisma.chatSession.create({
         data: {
           name: content,
+          mood: "neutral"
         },
       });
     } else {
@@ -63,9 +65,7 @@ export async function POST(request: Request) {
         },
       }
     );
-
-    console.log('TEST1');
-
+    console.log(response)
 
     const data = response.data;
     newMessages.push({
@@ -73,14 +73,9 @@ export async function POST(request: Request) {
       chatSessionId: chatSession.id,
     });
 
-    console.log('TEST2');
-
-
     await prisma.message.createMany({
       data: newMessages,
     });
-
-    console.log('TEST3');
 
     return NextResponse.json(
       {

@@ -29,17 +29,15 @@ export default function Home() {
     const response = await axiosInstance.post("/openai", {
       content,
     });
-    console.log(response.data);
 
-    setMessages(response.data);
-    console.log(messages);
+    setMessages(response.data.data);
   };
 
   const formSubmitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(form.entries()) as CreateMessageProps;
-    console.log(data);
+
     createMessage(data);
   };
 
@@ -76,6 +74,7 @@ export default function Home() {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+      setMessages(await response.json());
       return response.json();
     },
     enabled: shouldFetch,
@@ -125,6 +124,7 @@ export default function Home() {
                 <div className="border-4 rounded-full w-full p-2">
                   <input
                     type="text"
+                    name="content"
                     className="border-none bg-transparent w-full"
                     placeholder="Type or message"
                   />
