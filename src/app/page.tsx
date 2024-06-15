@@ -1,32 +1,32 @@
-"use client";
-import { ResizablePanelGroup, ResizablePanel } from "@/components/ui/resizable";
-import SidebarComponent from "@/components/base/sidebarComponent";
-import prisma from "@/lib/db";
-import { Button } from "@/components/ui/button";
+'use client';
+import { ResizablePanelGroup, ResizablePanel } from '@/components/ui/resizable';
+import SidebarComponent from '@/components/base/sidebarComponent';
+import prisma from '@/lib/db';
+import { Button } from '@/components/ui/button';
 
-import { useQuery } from "@tanstack/react-query";
-import axios, { AxiosResponse } from "axios";
-import { PaperPlaneTilt } from "@phosphor-icons/react";
-import { FormEvent, useState } from "react";
-import { MessageProps } from "./api/openai/route";
-import axiosInstance from "@/lib/axiosInstance";
-import ChatboxComponent from "@/components/module/chatboxComponent";
-import { ChatSession } from "@prisma/client";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import axios, { AxiosResponse } from 'axios';
+import { PaperPlaneTilt } from '@phosphor-icons/react';
+import { FormEvent, useEffect, useState } from 'react';
+import { MessageProps } from './api/openai/route';
+import axiosInstance from '@/lib/axiosInstance';
+import ChatboxComponent from '@/components/module/chatboxComponent';
+import { ChatSession } from '@prisma/client';
 
-/// Page
 export default function Home() {
   const [messages, setMessages] = useState<MessageProps[]>([]);
 
-  const [selectedChatSession, setSelectedChatSession] =
-    useState<ChatSession | null>(null);
+  const [selectedChatSession, setSelectedChatSession] = useState<ChatSession | null>(null);
   const [shouldFetch, setShouldFetch] = useState(false);
   const [messageState, setMessageState] = useState();
+  const queryClient = useQueryClient();
 
   type CreateMessageProps = {
     content: string;
   };
+
   const createMessage = async ({ content }: CreateMessageProps) => {
-    const response = await axiosInstance.post("/openai", {
+    const response = await axiosInstance.post('/openai', {
       content,
       chatSessionId: selectedChatSession?.id,
     });
@@ -37,47 +37,53 @@ export default function Home() {
     event.preventDefault();
     const form = new FormData(event.target as HTMLFormElement);
     const data = Object.fromEntries(form.entries()) as CreateMessageProps;
+    if (!data.content.trim()) return;
 
-    createMessage(data);
+    createMessage(data).then(() => {
+      if (selectedChatSession) {
+        queryClient.invalidateQueries({
+          queryKey: ['chat-session', 'message', selectedChatSession.id],
+        });
+      }
+    });
   };
 
-  const { isFetching, data, error, refetch } = useQuery({
-    queryKey: ["chat-session"],
+  const { data, refetch } = useQuery({
+    queryKey: ['chat-session'],
     queryFn: async () => {
-      const response = await fetch("/api/chat-sessions");
+      const response = await fetch('/api/chat-sessions');
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error('Network response was not ok');
       }
       return response.json();
     },
   });
 
-  const {
-    isFetching: isFetchingMessage,
-    data: messageData,
-    error: messageError,
-    refetch: messageRefetch,
-  } = useQuery({
-    queryKey: ["chat-session", "message", selectedChatSession?.id], // Add selectedChatSession to queryKey
+  const { refetch: messageRefetch } = useQuery({
+    queryKey: ['chat-session', 'message', selectedChatSession?.id],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/messages?id=${selectedChatSession?.id}`
-      );
+      const response = await fetch(`/api/messages?id=${selectedChatSession?.id}`);
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error('Network response was not ok');
       }
-      setMessages(await response.json());
-      return response.json();
+      const messages = await response.json();
+      setMessages(messages);
+      return messages;
     },
-    enabled: shouldFetch,
+    enabled: shouldFetch && selectedChatSession !== null,
   });
 
-  //fetch data from chat-session message
+  useEffect(() => {
+    if (shouldFetch && selectedChatSession) {
+      messageRefetch();
+    }
+  }, [selectedChatSession, shouldFetch, messageRefetch]);
 
   return (
     <ResizablePanelGroup direction="horizontal">
       <ResizablePanel defaultSize={14}>
         <SidebarComponent
+          activeChatSession={selectedChatSession}
           clearChatSessions={() => {
             setShouldFetch(false);
             setSelectedChatSession(null);
@@ -95,33 +101,19 @@ export default function Home() {
           <div className="w-full h-full ">
             <div className="px-16 py-8 overflow-y-auto h-[80vh]">
               {messages.map((m, i) => (
-                <ChatboxComponent
-                  key={i}
-                  isChatBot={m.role == "assistant"}
-                >
+                <ChatboxComponent key={i} isChatBot={m.role == 'assistant'}>
                   {m.content}
                 </ChatboxComponent>
               ))}
             </div>
             <div className="flex items-center px-16 pb-8">
-              <form
-                onSubmit={formSubmitHandler}
-                className="w-full flex items-center gap-2"
-              >
+              <form onSubmit={formSubmitHandler} className="w-full flex items-center gap-2">
                 <div className="border-4 rounded-full w-full p-2">
-                  <input
-                    type="text"
-                    name="content"
-                    className="border-none bg-transparent w-full"
-                    placeholder="Type or message"
-                  />
+                  <input type="text" name="content" className="border-none bg-transparent w-full" placeholder="Type or message" />
                 </div>
 
                 <button type="submit">
-                  <PaperPlaneTilt
-                    className="fill-blue-400"
-                    weight={"bold"}
-                  />
+                  <PaperPlaneTilt className="fill-blue-400" weight={'bold'} />
                 </button>
               </form>
             </div>

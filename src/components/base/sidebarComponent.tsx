@@ -12,6 +12,7 @@ interface SidebarTileProps {
   chatSessions: ChatSession[];
   onTileClick: (chatSession: ChatSession) => void;
   clearChatSessions: () => void;
+  activeChatSession: ChatSession | null;
 }
 
 const SidebarComponent = (props: SidebarTileProps) => {
@@ -46,16 +47,19 @@ const SidebarComponent = (props: SidebarTileProps) => {
         <div className="border-t-2 border-gray-300 w-full"></div>
       </div>
       <p className="font-semibold">Search History</p>
-      {filteredChatSessions.map((chatSession) => (
-        <SidebarTileComponent
-          key={chatSession.id}
-          onClick={() => {
-            props.onTileClick(chatSession);
-          }}
-        >
-          {chatSession.name}
-        </SidebarTileComponent>
-      ))}
+      <div className="flex flex-col overflow-y-auto gap-6 max-h-[50vh]">
+        {filteredChatSessions.map((chatSession) => (
+          <SidebarTileComponent
+            key={chatSession.id}
+            active={props.activeChatSession?.id === chatSession.id}
+            onClick={() => {
+              props.onTileClick(chatSession);
+            }}
+          >
+            {chatSession.name}
+          </SidebarTileComponent>
+        ))}
+      </div>
     </div>
   );
 };
