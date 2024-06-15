@@ -76,3 +76,23 @@
     }
   }
 
+  .button{
+    border-radius: 20px 5rem 5rem 0;
+    border: 3px solid black;
+    position: relative;
+    background: white;
+    height: 3rem;
+  }
+
+  .button::before{
+    z-index: -1;
+    content: '';
+    position: absolute;
+    top: 30%;
+    left: -3px;
+    width: calc(100% + 3px) ;
+    height: 100%;
+    
+    background: black;
+    border-radius: 0 5rem 5rem 0;
+  }

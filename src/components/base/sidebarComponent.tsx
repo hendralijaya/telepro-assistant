@@ -29,37 +29,12 @@ const SidebarComponent = () => {
   return (
     <div className="flex flex-col gap-4 p-4">
       <SidebarTileComponent
-        Icon={Plus}
-        title="New Chat"
         onClick={() => {
           router.push("/admin");
         }}
-      />
-
-      <SidebarTileComponent
-        Icon={Users}
-        title="Candidate"
-        isActive={pathName == "/admin"}
-        onClick={() => {
-          router.push("/admin");
-        }}
-      />
-      <SidebarTileComponent
-        Icon={AddressBook}
-        title="User"
-        isActive={pathName == "/admin/user"}
-        onClick={() => {
-          router.push("/admin/user");
-        }}
-      />
-      <SidebarTileComponent
-        Icon={MapTrifold}
-        title="Vote"
-        isActive={pathName == "/admin/vote"}
-        onClick={() => {
-          router.push("/admin/vote");
-        }}
-      />
+      >
+        Samting
+      </SidebarTileComponent>
     </div>
   );
 };
