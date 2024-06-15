@@ -20,11 +20,12 @@ export async function POST(request: Request) {
     const apiKey = process.env.OPENAI_API_KEY;
     const { chatSessionId, content } = await request.json();
 
+
+    
     let chatSession: any;
     if (!chatSessionId) {
       chatSession = await prisma.chatSession.create({
         data: {
-          // TODO: Change it to something searchable
           name: content,
         },
       });
@@ -35,12 +36,16 @@ export async function POST(request: Request) {
       });
     }
 
+    console.log('Before new Message')
+
     const newMessages: any = [...(chatSession?.messages ?? [])];
     newMessages.push({
       role: 'user',
       content,
       chatSessionId: chatSession.id,
     });
+
+    console.log('TEST');
 
     // AI Processing
     const response: AxiosResponse<OpenAIResponse> = await axios.post(
@@ -59,11 +64,17 @@ export async function POST(request: Request) {
       }
     );
 
+    console.log('TEST1');
+
+
     const data = response.data;
     newMessages.push({
       ...data.choices[0].message,
       chatSessionId: chatSession.id,
     });
+
+    console.log('TEST2');
+
 
     await prisma.message.createMany({
       data: newMessages,
