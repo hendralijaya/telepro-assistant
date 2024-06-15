@@ -16,12 +16,10 @@ import { ChatSession } from "@prisma/client";
 /// Page
 export default function Home() {
   const [messages, setMessages] = useState<MessageProps[]>([]);
-
   const [selectedChatSession, setSelectedChatSession] =
     useState<ChatSession | null>(null);
   const [shouldFetch, setShouldFetch] = useState(false);
 
-  // OpenAI API
   type CreateMessageProps = {
     content: string;
   };
@@ -29,7 +27,6 @@ export default function Home() {
     const response = await axiosInstance.post("/openai", {
       content,
     });
-
     setMessages(response.data.data);
   };
 
@@ -41,13 +38,6 @@ export default function Home() {
     createMessage(data);
   };
 
-  // TODO: Bug Fixing useQuery error
-  // const { isFetching, data, error, refetch } = useQuery({
-  //   queryKey: ["chat-session"],
-  //   queryFn: async () => {
-  //     return prisma.chatSession.findMany();
-  //   },
-  // });
   const { isFetching, data, error, refetch } = useQuery({
     queryKey: ["chat-session"],
     queryFn: async () => {
@@ -59,7 +49,6 @@ export default function Home() {
     },
   });
 
-  // fetch specific message from the chat session
   const {
     isFetching: isFetchingMessage,
     data: messageData,
